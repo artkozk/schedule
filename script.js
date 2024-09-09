@@ -46,6 +46,14 @@ const schedule = {
     ]
 };
 
+const homework = {
+    "Monday": {},
+    "Tuesday": {},
+    "Wednesday": {},
+    "Thursday": {},
+    "Friday": {}
+};
+
 const lessonTimes = [
     "08:00 - 08:40",
     "08:50 - 09:30",
@@ -56,42 +64,27 @@ const lessonTimes = [
     "13:00 - 13:40"
 ];
 
-function getCurrentLessonIndex() {
-    const now = new Date();
-    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+const adminPassword = 'admin123'; // Пароль для добавления домашнего задания
 
-    for (let i = 0; i < lessonTimes.length; i++) {
-        const [start, end] = lessonTimes[i].split(' - ');
-        const [startHour, startMinute] = start.split(':').map(Number);
-        const startMinutes = startHour * 60 + startMinute;
+let currentDayIndex = new Date().getDay() - 1; // Понедельник = 0
 
-        if (currentMinutes + 10 >= startMinutes && currentMinutes < startMinutes) {
-            return i;
-        }
-    }
-    return -1;
+function getDayName(index) {
+    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+    return days[index];
 }
 
 function loadSchedule() {
-    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-    const today = new Date().getDay();
-    const todayName = days[today];
+    const todayName = getDayName(currentDayIndex);
     const todaySchedule = schedule[todayName] || [];
-
     const scheduleBody = document.getElementById('schedule-body');
+    const dayOfWeek = document.getElementById('day-of-week');
     scheduleBody.innerHTML = '';
 
-    const currentLessonIndex = getCurrentLessonIndex();
+    dayOfWeek.textContent = `Сегодня: ${todayName}`;
 
     todaySchedule.forEach((lesson, index) => {
         const row = document.createElement('tr');
 
-        if (index === currentLessonIndex) {
-            row.style.backgroundColor = 'lightgreen';
-        } else if (index < currentLessonIndex) {
-            row.style.backgroundColor = 'lightcoral';
-        }
-        
         const numberCell = document.createElement('td');
         numberCell.textContent = index + 1;
         row.appendChild(numberCell);
@@ -106,8 +99,55 @@ function loadSchedule() {
             row.appendChild(cell);
         });
 
+        const homeworkCell = document.createElement('td');
+        const homeworkText = homework[todayName][index + 1] || '';
+        homeworkCell.textContent = homeworkText;
+        row.appendChild(homeworkCell);
+
         scheduleBody.appendChild(row);
     });
+}
+
+function previousDay() {
+    if (currentDayIndex > 0) {
+        currentDayIndex--;
+        loadSchedule();
+    }
+}
+
+function nextDay() {
+    if (currentDayIndex < 4) {
+        currentDayIndex++;
+        loadSchedule();
+    }
+}
+
+function showHomeworkDialog() {
+    document.getElementById('homework-dialog').style.display = 'block';
+}
+
+function hideHomeworkDialog() {
+    document.getElementById('homework-dialog').style.display = 'none';
+}
+
+function addHomework() {
+    const password = document.getElementById('password').value;
+    const day = document.getElementById('homework-day').value;
+    const lessonNumber = parseInt(document.getElementById('homework-lesson').value);
+    const text = document.getElementById('homework-text').value;
+
+    if (password === adminPassword) {
+        if (!homework[day]) {
+            homework[day] = {};
+        }
+
+        homework[day][lessonNumber] = text;
+
+        hideHomeworkDialog();
+        loadSchedule();
+    } else {
+        alert('Неверный пароль! Пожалуйста, попробуйте снова.');
+    }
 }
 
 loadSchedule();

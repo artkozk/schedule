@@ -7,20 +7,49 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Расписание уроков 10 класса</h1>
-    <table id="schedule-table">
-        <thead>
-            <tr>
-                <th>№</th>
-                <th>Время</th>
-                <th>Предмет</th>
-                <th>Кабинет</th>
-                <th>Учитель</th>
-            </tr>
-        </thead>
-        <tbody id="schedule-body">
-        </tbody>
-    </table>
-    <script src="script.js"></script>
+<h1>Расписание уроков 10 класса</h1>
+<p id="day-of-week"></p>
+<table id="schedule-table">
+    <thead>
+    <tr>
+        <th>№</th>
+        <th>Время</th>
+        <th>Предмет</th>
+        <th>Кабинет</th>
+        <th>Учитель</th>
+        <th>Домашнее задание</th>
+    </tr>
+    </thead>
+    <tbody id="schedule-body">
+    </tbody>
+</table>
+<button onclick="previousDay()">Предыдущий день</button>
+<button onclick="nextDay()">Следующий день</button>
+<button onclick="showHomeworkDialog()">Добавить домашнее задание</button>
+
+<div id="homework-dialog" class="modal" style="display:none;">
+    <div class="modal-content">
+        <span class="close" onclick="hideHomeworkDialog()">&times;</span>
+        <h2>Добавить домашнее задание</h2>
+        <label for="password">Введите пароль:</label>
+        <input type="password" id="password">
+        <label for="homework-day">Выберите день:</label>
+        <select id="homework-day">
+            <option value="Monday">Понедельник</option>
+            <option value="Tuesday">Вторник</option>
+            <option value="Wednesday">Среда</option>
+            <option value="Thursday">Четверг</option>
+            <option value="Friday">Пятница</option>
+        </select>
+        <label for="homework-lesson">Выберите урок (номер):</label>
+        <input type="number" id="homework-lesson" min="1" max="7">
+        <label for="homework-text">Текст домашнего задания:</label>
+        <textarea id="homework-text"></textarea>
+        <button onclick="addHomework()">Добавить</button>
+        <button onclick="hideHomeworkDialog()">Закрыть</button>
+    </div>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
